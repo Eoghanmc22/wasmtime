@@ -13,6 +13,8 @@
 #[cfg(has_virtual_memory)]
 use crate::prelude::*;
 
+use std::cell::Cell;
+
 pub mod capi;
 #[cfg(has_virtual_memory)]
 pub mod mmap;
@@ -30,12 +32,23 @@ fn cvt(rc: i32) -> Result<()> {
     }
 }
 
+// #[inline]
+// pub fn tls_get() -> *mut u8 {
+//     unsafe { capi::wasmtime_tls_get() }
+// }
+//
+// #[inline]
+// pub fn tls_set(ptr: *mut u8) {
+//     unsafe { capi::wasmtime_tls_set(ptr) }
+// }
+std::thread_local!(static TLS: Cell<*mut u8> = const { Cell::new(std::ptr::null_mut()) });
+
 #[inline]
 pub fn tls_get() -> *mut u8 {
-    unsafe { capi::wasmtime_tls_get() }
+    TLS.with(|p| p.get())
 }
 
 #[inline]
 pub fn tls_set(ptr: *mut u8) {
-    unsafe { capi::wasmtime_tls_set(ptr) }
+    TLS.with(|p| p.set(ptr));
 }
