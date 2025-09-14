@@ -22,7 +22,6 @@ cfg-if = { workspace = true }
 cranelift-codegen = { workspace = true, features = [
     "disas",
     "trace-log",
-    "timing",
 ] }
 cranelift-entity = { workspace = true }
 cranelift-interpreter = { workspace = true }
